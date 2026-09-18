@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Agriculture Academy | Quick AgLE Self-Test — Crop Science</title>
+<style>
+  :root{
+    --primary:#1b5e20;
+    --primary-dark:#0a3d0d;
+    --primary-light:#e8f5e9;
+    --accent:#f9a825;
+    --accent-dark:#e08c00;
+    --bg:#f4f7f4;
+    --card:#ffffff;
+    --text:#1c291e;
+    --muted:#5a6d5d;
+    --border:#d5e2d6;
+    --success:#2e7d32;
+    --success-bg:#e6f4ea;
+    --error:#c62828;
+    --error-bg:#fdeaea;
+    --radius-lg:18px;
+    --radius-md:12px;
+    --radius-sm:8px;
+    --shadow:0 6px 20px rgba(27,94,32,0.08);
+    --shadow-sm:0 2px 8px rgba(27,94,32,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:linear-gradient(180deg,#f4f7f4 0%,#ecf2ec 100%);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  .app{width:100%;max-width:920px;min-height:100vh;display:flex;flex-direction:column;background:var(--bg);}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(244,247,244,.94);backdrop-filter:blur(6px);padding:14px 20px 10px;border-bottom:1px solid var(--border);}
+  .brand{font-weight:800;font-size:1.05rem;color:var(--primary-dark);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .progress-wrap{display:flex;align-items:center;gap:10px;}
+  .progress-track{flex:1;height:8px;background:var(--border);border-radius:99px;overflow:hidden;}
+  .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:99px;transition:width .4s ease;}
+  #progressLabel{font-size:.78rem;color:var(--muted);white-space:nowrap;font-weight:600;}
+
+  /* Mobile-safe bottom clearance so fixed nav never overlaps interactive buttons */
+  main{flex:1;padding:20px;padding-bottom:190px;}
+  .slide{display:none;animation:fadeIn .35s ease;}
+  .slide.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  .intro-card{background:var(--card);border-radius:var(--radius-lg);padding:36px 26px;text-align:center;box-shadow:var(--shadow);margin-top:10px;}
+  .intro-emoji{font-size:2.6rem;margin-bottom:6px;}
+  .intro-card h1{font-size:1.45rem;margin:6px 0 10px;color:var(--primary-dark);}
+  .intro-card p{color:var(--muted);line-height:1.6;font-size:.98rem;max-width:550px;margin:0 auto 10px;}
+  .badge-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0 26px;}
+  .badge{background:var(--primary-light);color:var(--primary-dark);font-weight:700;padding:8px 14px;border-radius:99px;font-size:.82rem;border:1px solid #c8e6c9;}
+  .domain-preview{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:20px 0;text-align:left;}
+  .domain-chip{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:.8rem;font-weight:600;color:var(--text);}
+  .domain-chip span{display:block;font-size:.7rem;color:var(--muted);font-weight:500;margin-top:2px;}
+
+  .btn{border:none;border-radius:var(--radius-md);padding:14px 22px;font-size:1rem;font-weight:700;cursor:pointer;min-height:50px;transition:transform .12s ease,box-shadow .12s ease,opacity .12s;touch-action:manipulation;}
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(27,94,32,.3);}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-accent{background:var(--accent);color:#3a2a00;box-shadow:0 4px 12px rgba(249,168,37,.35);}
+  .btn-accent:hover{background:var(--accent-dark);}
+  .btn-ghost{background:transparent;color:var(--muted);border:2px solid var(--border);}
+  .btn-ghost:hover{border-color:var(--primary);color:var(--primary-dark);}
+  .btn-block{width:100%;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+  .hidden{display:none!important;}
+
+  .domain-header{margin-bottom:14px;}
+  .domain-tag{display:inline-block;background:var(--primary-light);color:var(--primary-dark);font-size:.75rem;font-weight:800;letter-spacing:.03em;padding:5px 10px;border-radius:99px;text-transform:uppercase;margin-bottom:8px;}
+  .domain-header h2{margin:0;font-size:1.25rem;color:var(--text);}
+  .domain-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:16px;}
+  @media(min-width:760px){.domain-grid{grid-template-columns:1fr 1fr;}}
+  .review-panel,.visual-panel,.quiz-card{background:var(--card);border-radius:var(--radius-lg);padding:18px 18px 20px;box-shadow:var(--shadow-sm);border:1px solid var(--border);}
+  .umbrella{margin:0 0 12px;font-size:1.02rem;color:var(--primary-dark);font-weight:800;padding-bottom:8px;border-bottom:2px dashed var(--border);}
+  .subtopics{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .subtopics li{font-size:.9rem;line-height:1.5;color:var(--text);padding-left:22px;position:relative;}
+  .subtopics li::before{content:"🌱";position:absolute;left:0;top:0;font-size:.85rem;}
+  .subtopics li strong{color:var(--primary-dark);}
+
+  .visual-panel h4{margin:0 0 10px;font-size:.9rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.02em;}
+  .visual-panel svg{width:100%;height:auto;display:block;background:var(--bg);border-radius:var(--radius-sm);}
+  .visual-panel input[type="range"]{width:100%;margin-top:12px;accent-color:var(--primary);height:26px;}
+  .visual-readout{font-size:.82rem;color:var(--text);background:var(--primary-light);border-radius:var(--radius-sm);padding:9px 11px;margin-top:10px;line-height:1.5;min-height:20px;}
+
+  .chip-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .term-chip{background:var(--primary);color:#fff;font-weight:800;font-size:.82rem;padding:10px 14px;border-radius:99px;cursor:pointer;user-select:none;transition:transform .12s ease;}
+  .term-chip:active{transform:scale(.96);}
+  .term-tooltip{display:none;margin-top:10px;background:var(--primary-light);color:var(--text);border-radius:var(--radius-sm);padding:10px 12px;font-size:.82rem;font-weight:500;line-height:1.5;}
+  .term-tooltip.show{display:block;}
+
+  .question-text{font-size:1rem;font-weight:700;margin:0 0 14px;line-height:1.5;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .option-card{background:var(--bg);border:2px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;font-size:.92rem;cursor:pointer;min-height:48px;display:flex;align-items:flex-start;gap:10px;transition:border-color .15s ease,background .15s ease;line-height:1.4;}
+  .option-card:active{transform:scale(.99);}
+  .option-letter{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center;}
+  .option-card.selected{border-color:var(--primary);background:var(--primary-light);font-weight:700;}
+  .option-card.disabled{cursor:not-allowed;pointer-events:none;}
+  .option-card.correct-answer{border-color:var(--success);background:var(--success-bg);font-weight:700;}
+  .option-card.correct-answer .option-letter{background:var(--success);}
+  .option-card.wrong-answer{border-color:var(--error);background:var(--error-bg);font-weight:700;}
+  .option-card.wrong-answer .option-letter{background:var(--error);}
+
+  .action-row{margin-top:16px;}
+  .confirm-box{margin-top:14px;background:#fff8e6;border:1px solid #f3d98a;border-radius:var(--radius-md);padding:14px 16px;}
+  .confirm-box p{margin:0 0 12px;font-weight:700;font-size:.9rem;}
+  .confirm-actions{display:flex;gap:10px;}
+  .confirm-actions .btn{flex:1;padding:11px;min-height:44px;}
+  .feedback{margin-top:16px;border-radius:var(--radius-md);padding:14px 16px;}
+  .feedback-correct{background:var(--success-bg);border:1px solid #b6dfc0;}
+  .feedback-wrong{background:var(--error-bg);border:1px solid #f0bcbc;}
+  .feedback-title{margin:0 0 6px;font-weight:800;font-size:1rem;}
+  .feedback p{margin:0 0 8px;font-size:.9rem;line-height:1.5;}
+  .calc-box{margin-top:8px;background:rgba(255,255,255,.6);border-radius:var(--radius-sm);padding:10px 12px;font-size:.85rem;line-height:1.8;font-family:"SFMono-Regular",Consolas,monospace;}
+
+  .score-card{background:var(--card);border-radius:var(--radius-lg);padding:32px 22px;text-align:center;box-shadow:var(--shadow);margin-top:6px;}
+  .score-number{font-size:3rem;font-weight:900;color:var(--primary-dark);margin:8px 0;}
+  .motivation{font-size:.98rem;color:var(--text);max-width:500px;margin:6px auto 22px;line-height:1.6;}
+  .rec-title{font-size:.9rem;font-weight:800;text-transform:uppercase;letter-spacing:.02em;color:var(--muted);margin:22px 0 12px;text-align:left;}
+  #recommendations{display:flex;flex-direction:column;gap:10px;text-align:left;}
+  .rec-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;font-size:.87rem;line-height:1.5;}
+  .rec-item strong{color:var(--primary-dark);}
+  .all-correct{background:var(--success-bg);border-radius:var(--radius-md);padding:14px;font-weight:700;}
+
+  .navbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:920px;background:rgba(244,247,244,.96);backdrop-filter:blur(6px);border-top:1px solid var(--border);padding:12px 20px calc(12px + env(safe-area-inset-bottom));display:flex;gap:10px;z-index:20;}
+  .navbar .btn{flex:1;}
+  .toast{position:fixed;bottom:140px;left:50%;transform:translateX(-50%) translateY(20px);background:#2b2b2b;color:#fff;padding:12px 20px;border-radius:99px;font-size:.85rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:50;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.2);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  @media(max-width:480px){.intro-card h1{font-size:1.2rem}.score-number{font-size:2.3rem}main{padding:14px;padding-bottom:195px}.toast{white-space:normal;text-align:center;max-width:88%}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">🌾 Agriculture Academy</div>
+    <div class="progress-wrap"><div class="progress-track"><div class="progress-bar" id="progressBar"></div></div><span id="progressLabel">Intro</span></div>
+  </div>
+
+  <main id="slides">
+    <!-- INTRO -->
+    <section class="slide active" id="slide-0">
+      <div class="intro-card">
+        <div class="intro-emoji">🌽</div>
+        <h1>Quick AgLE Self-Test — Crop Science</h1>
+        <p>A rapid diagnostic covering six core Crop Science domains of the Agriculturist Licensure Examination (AgLE): Crop Physiology, Agronomic Crop Production, Horticultural Crop Production, Plant Breeding &amp; Genetics, Plant Propagation &amp; Seed Technology, and Post-Harvest Handling &amp; Technology. Each domain includes a review panel, an interactive visual, and one exam-style question.</p>
+        <div class="badge-row"><span class="badge">⏱ 10–15 minutes</span><span class="badge">📝 6 questions</span><span class="badge">🔁 1 free retake</span></div>
+        <div class="domain-preview">
+          <div class="domain-chip">1. Crop Physiology<span>Photosynthesis &amp; stomata</span></div>
+          <div class="domain-chip">2. Agronomic Production<span>Field crops &amp; population</span></div>
+          <div class="domain-chip">3. Horticultural Production<span>Olericulture &amp; pomology</span></div>
+          <div class="domain-chip">4. Breeding &amp; Genetics<span>Mendel &amp; hybrid vigor</span></div>
+          <div class="domain-chip">5. Propagation &amp; Seeds<span>Germination &amp; grafting</span></div>
+          <div class="domain-chip">6. Post-Harvest Tech<span>Respiration &amp; storage</span></div>
+        </div>
+        <button class="btn btn-primary btn-block" id="startBtn">Start Quiz →</button>
+      </div>
+    </section>
+
+    <!-- DOMAIN 1: CROP PHYSIOLOGY -->
+    <section class="slide" id="slide-1">
+      <div class="domain-header"><span class="domain-tag">Domain 1 of 6</span><h2>Crop Physiology</h2></div>
+      <div class="domain-grid">
+        <div class="review-panel"><h3 class="umbrella">☀️ Photosynthesis &amp; Transpiration</h3><ul class="subtopics"><li><strong>C3 vs. C4 vs. CAM</strong> — C4 crops (corn, sugarcane) utilize PEP carboxylase to avoid photorespiration under high light/temp.</li><li><strong>Stomatal Conductance</strong> — guard cells regulate CO₂ influx and transpirational cooling based on light, humidity, and ABA.</li><li><strong>Source-Sink Dynamics</strong> — photoassimilates translocate from mature leaves (sources) to filling grains or tubers (sinks).</li></ul></div>
+        <div class="visual-panel">
+          <h4>Interactive: Leaf Physiology Dashboard</h4>
+          <svg viewBox="0 0 300 140">
+            <!-- Leaf Cross-Section Mockup -->
+            <rect x="20" y="20" width="260" height="24" rx="4" fill="#81c784" stroke="#2e7d32" stroke-width="1.5"/>
+            <rect x="20" y="44" width="260" height="46" fill="#c8e6c9" stroke="#81c784" stroke-width="1"/>
+            <rect x="20" y="90" width="260" height="24" rx="4" fill="#a5d6a7" stroke="#2e7d32" stroke-width="1.5"/>
+            <!-- Stomatal Pore -->
+            <ellipse id="stomaL" cx="140" cy="102" rx="4" ry="7" fill="#1b5e20"/>
+            <ellipse id="stomaR" cx="160" cy="102" rx="4" ry="7" fill="#1b5e20"/>
+            <rect id="stomaPore" x="144" y="96" width="12" height="12" fill="#20281f" rx="3"/>
+            <!-- Dynamic Rate Bars -->
+            <rect x="30" y="52" width="70" height="12" rx="3" fill="#ffffff" opacity="0.6"/>
+            <rect id="psRateBar" x="30" y="52" width="40" height="12" rx="3" fill="#2e7d32"/>
+            <text x="32" y="62" font-size="8" fill="#ffffff" font-weight="700">Photosynthesis</text>
+            <rect x="180" y="52" width="85" height="12" rx="3" fill="#ffffff" opacity="0.6"/>
+            <rect id="trRateBar" x="180" y="52" width="30" height="12" rx="3" fill="#0288d1"/>
+            <text x="182" y="62" font-size="8" fill="#ffffff" font-weight="700">Transpiration (H₂O)</text>
+          </svg>
+          <input type="range" id="lightSlider" min="0" max="100" value="50">
+          <p class="visual-readout" id="physioReadout"></p>
+        </div>
+      </div>
+      <div class="quiz-card" id="quiz-0"><p class="question-text" id="qtext-0"></p><div class="options" id="options-0"></div><div class="action-row"><button class="btn btn-accent hidden" id="submitBtn-0" data-domain="0">Submit Answer</button></div><div class="confirm-box hidden" id="confirmBox-0"><p>Are you sure you want to submit this answer?</p><div class="confirm-actions"><button class="btn btn-primary" id="yesBtn-0" data-domain="0">Yes</button><button class="btn btn-ghost" id="noBtn-0" data-domain="0">No</button></div></div><div class="feedback hidden" id="feedback-0"></div></div>
+    </section>
+
+    <!-- DOMAIN 2: AGRONOMIC CROP PRODUCTION -->
+    <section class="slide" id="slide-2">
+      <div class="domain-header"><span class="domain-tag">Domain 2 of 6</span><h2>Agronomic Crop Production</h2></div>
+      <div class="domain-grid">
+        <div class="review-panel"><h3 class="umbrella">🌾 Grain &amp; Industrial Crops</h3><ul class="subtopics"><li><strong>Plant Density</strong> — population per hectare = 10,000 m² ÷ (row spacing × hill spacing) × plants/hill.</li><li><strong>Rice Ecosystems</strong> — irrigated lowland, rainfed lowland, and upland environments determine cultivar and water regime.</li><li><strong>Cropping Systems</strong> — multiple cropping, intercropping, and crop rotation optimize land-use efficiency and suppress pests.</li></ul></div>
+        <div class="visual-panel">
+          <h4>Interactive: Plant Population per Hectare</h4>
+          <svg viewBox="0 0 300 130">
+            <rect x="20" y="15" width="260" height="95" rx="8" fill="#e8f5e9" stroke="#81c784" stroke-width="1.5"/>
+            <!-- Grid points -->
+            <g id="cropGrid"></g>
+          </svg>
+          <input type="range" id="popSlider" min="20" max="100" value="75" step="5">
+          <p class="visual-readout" id="popReadout"></p>
+        </div>
+      </div>
+      <div class="quiz-card" id="quiz-1"><p class="question-text" id="qtext-1"></p><div class="options" id="options-1"></div><div class="action-row"><button class="btn btn-accent hidden" id="submitBtn-1" data-domain="1">Submit Answer</button></div><div class="confirm-box hidden" id="confirmBox-1"><p>Are you sure you want to submit this answer?</p><div class="confirm-actions"><button class="btn btn-primary" id="yesBtn-1" data-domain="1">Yes</button><button class="btn btn-ghost" id="noBtn-1" data-domain="1">No</button></div></div><div class="feedback hidden" id="feedback-1"></div></div>
+    </section>
+
+    <!-- DOMAIN 3: HORTICULTURAL CROP PRODUCTION -->
+    <section class="slide" id="slide-3">
+      <div class="domain-header"><span class="domain-tag">Domain 3 of 6</span><h2>Horticultural Crop Production</h2></div>
+      <div class="domain-grid">
+        <div class="review-panel"><h3 class="umbrella">🥦 High-Value Horticultural Crops</h3><ul class="subtopics"><li><strong>Branches of Horticulture</strong> — Olericulture (vegetables), Pomology (fruits), and Floriculture/Landscaping (ornamentals).</li><li><strong>Pruning &amp; Training</strong> — balances vegetative growth with reproductive fruit load and maximizes canopy light interception.</li><li><strong>Protected Cultivation</strong> — greenhouses and rain shelters safeguard crops from heavy monsoon rains and high pest pressure.</li></ul></div>
+        <div class="visual-panel">
+          <h4>Interactive: Branches of Horticulture</h4>
+          <div class="chip-row" id="hortChips"></div>
+          <div class="term-tooltip" id="hortTooltip"></div>
+        </div>
+      </div>
+      <div class="quiz-card" id="quiz-2"><p class="question-text" id="qtext-2"></p><div class="options" id="options-2"></div><div class="action-row"><button class="btn btn-accent hidden" id="submitBtn-2" data-domain="2">Submit Answer</button></div><div class="confirm-box hidden" id="confirmBox-2"><p>Are you sure you want to submit this answer?</p><div class="confirm-actions"><button class="btn btn-primary" id="yesBtn-2" data-domain="2">Yes</button><button class="btn btn-ghost" id="noBtn-2" data-domain="2">No</button></div></div><div class="feedback hidden" id="feedback-2"></div></div>
+    </section>
+
+    <!-- DOMAIN 4: PLANT BREEDING AND GENETICS -->
+    <section class="slide" id="slide-4">
+      <div class="domain-header"><span class="domain-tag">Domain 4 of 6</span><h2>Plant Breeding &amp; Genetics</h2></div>
+      <div class="domain-grid">
+        <div class="review-panel"><h3 class="umbrella">🧬 Cultivar Development &amp; Selection</h3><ul class="subtopics"><li><strong>Mating Systems</strong> — self-pollinated crops (pureline selection, pedigree) vs. cross-pollinated crops (heterosis, synthetics).</li><li><strong>Heterosis (Hybrid Vigor)</strong> — superiority of F1 hybrid progeny over the mean or better of their parental lines.</li><li><strong>Biotechnology Tools</strong> — marker-assisted selection (MAS) and genetic transformation accelerate cultivar development.</li></ul></div>
+        <div class="visual-panel">
+          <h4>Interactive: F1 Hybrid Vigor (Heterosis)</h4>
+          <svg viewBox="0 0 300 140">
+            <rect x="30" y="75" width="45" height="45" rx="6" fill="#81c784"/>
+            <text x="38" y="100" font-size="10" fill="#1b5e20" font-weight="700">Line A</text>
+            <text x="95" y="100" font-size="16" fill="#5a6d5d" font-weight="800">×</text>
+            <rect x="125" y="75" width="45" height="45" rx="6" fill="#81c784"/>
+            <text x="133" y="100" font-size="10" fill="#1b5e20" font-weight="700">Line B</text>
+            <text x="185" y="100" font-size="16" fill="#5a6d5d" font-weight="800">→</text>
+            <rect id="f1Bar" x="215" y="30" width="55" height="90" rx="8" fill="#f9a825"/>
+            <text id="f1Text" x="228" y="78" font-size="12" fill="#3a2a00" font-weight="800">F1</text>
+          </svg>
+          <input type="range" id="vigorSlider" min="0" max="100" value="40">
+          <p class="visual-readout" id="vigorReadout"></p>
+        </div>
+      </div>
+      <div class="quiz-card" id="quiz-3"><p class="question-text" id="qtext-3"></p><div class="options" id="options-3"></div><div class="action-row"><button class="btn btn-accent hidden" id="submitBtn-3" data-domain="3">Submit Answer</button></div><div class="confirm-box hidden" id="confirmBox-3"><p>Are you sure you want to submit this answer?</p><div class="confirm-actions"><button class="btn btn-primary" id="yesBtn-3" data-domain="3">Yes</button><button class="btn btn-ghost" id="noBtn-3" data-domain="3">No</button></div></div><div class="feedback hidden" id="feedback-3"></div></div>
+    </section>
+
+    <!-- DOMAIN 5: PLANT PROPAGATION AND SEED TECHNOLOGY -->
+    <section class="slide" id="slide-5">
+      <div class="domain-header"><span class="domain-tag">Domain 5 of 6</span><h2>Plant Propagation &amp; Seed Tech</h2></div>
+      <div class="domain-grid">
+        <div class="review-panel"><h3 class="umbrella">🌱 Seed Testing &amp; Asexual Propagation</h3><ul class="subtopics"><li><strong>Germination Percentage</strong> — (normal seedlings ÷ total seeds planted) × 100; evaluates seed lot viability.</li><li><strong>Seed Classes in PH</strong> — Breeder Seed (white tag) → Foundation Seed (red) → Registered Seed (green) → Certified Seed (blue).</li><li><strong>Grafting &amp; Budding</strong> — unites scion and rootstock via cambial alignment for clonal multiplication of fruit crops.</li></ul></div>
+        <div class="visual-panel">
+          <h4>Interactive: Seed Germination Tray</h4>
+          <svg viewBox="0 0 300 130">
+            <rect x="20" y="15" width="260" height="95" rx="8" fill="#e8f5e9" stroke="#81c784" stroke-width="1.5"/>
+            <g id="seedGrid"></g>
+          </svg>
+          <input type="range" id="germSlider" min="50" max="100" value="92" step="1">
+          <p class="visual-readout" id="germReadout"></p>
+        </div>
+      </div>
+      <div class="quiz-card" id="quiz-4"><p class="question-text" id="qtext-4"></p><div class="options" id="options-4"></div><div class="action-row"><button class="btn btn-accent hidden" id="submitBtn-4" data-domain="4">Submit Answer</button></div><div class="confirm-box hidden" id="confirmBox-4"><p>Are you sure you want to submit this answer?</p><div class="confirm-actions"><button class="btn btn-primary" id="yesBtn-4" data-domain="4">Yes</button><button class="btn btn-ghost" id="noBtn-4" data-domain="4">No</button></div></div><div class="feedback hidden" id="feedback-4"></div></div>
+    </section>
+
+    <!-- DOMAIN 6: POST-HARVEST HANDLING AND TECHNOLOGY -->
+    <section class="slide" id="slide-6">
+      <div class="domain-header"><span class="domain-tag">Domain 6 of 6</span><h2>Post-Harvest Handling &amp; Technology</h2></div>
+      <div class="domain-grid">
+        <div class="review-panel"><h3 class="umbrella">📦 Maintaining Quality &amp; Reducing Losses</h3><ul class="subtopics"><li><strong>Climacteric vs. Non-Climacteric</strong> — climacteric fruits (banana, mango) exhibit an ethylene and respiration burst during ripening.</li><li><strong>Temperature &amp; Cold Chain</strong> — precooling and low storage temperature slow respiration, moisture loss, and pathogen decay.</li><li><strong>Harvest Index (HI)</strong> — ratio of economic yield (e.g., grain) to total biological aboveground biomass.</li></ul></div>
+        <div class="visual-panel">
+          <h4>Interactive: Fruit Respiration &amp; Ripening</h4>
+          <svg viewBox="0 0 300 140">
+            <line x1="20" y1="120" x2="280" y2="120" stroke="#c8d6c9" stroke-width="2"/>
+            <path id="climCurve" d="M20,105 C80,105 130,95 160,35 C185,25 210,85 280,105" fill="none" stroke="#f9a825" stroke-width="3.5"/>
+            <circle id="climDot" cx="20" cy="105" r="7" fill="#1b5e20" stroke="#fff" stroke-width="2"/>
+            <text x="8" y="20" font-size="10" fill="#5a6d5d">Respiration Rate</text>
+            <text x="245" y="135" font-size="10" fill="#5a6d5d">Ripening Stage</text>
+          </svg>
+          <input type="range" id="climSlider" min="0" max="100" value="0">
+          <p class="visual-readout" id="climReadout"></p>
+        </div>
+      </div>
+      <div class="quiz-card" id="quiz-5"><p class="question-text" id="qtext-5"></p><div class="options" id="options-5"></div><div class="action-row"><button class="btn btn-accent hidden" id="submitBtn-5" data-domain="5">Submit Answer</button></div><div class="confirm-box hidden" id="confirmBox-5"><p>Are you sure you want to submit this answer?</p><div class="confirm-actions"><button class="btn btn-primary" id="yesBtn-5" data-domain="5">Yes</button><button class="btn btn-ghost" id="noBtn-5" data-domain="5">No</button></div></div><div class="feedback hidden" id="feedback-5"></div></div>
+    </section>
+
+    <!-- SCORE -->
+    <section class="slide" id="slide-score">
+      <div class="score-card"><div class="intro-emoji">🎓</div><h1 style="margin:4px 0 0;font-size:1.3rem;color:var(--primary-dark);">Your Results</h1><div class="score-number" id="scoreNumber">0 / 6</div><p class="motivation" id="motivationText"></p><div class="rec-title">📌 Study Focus Recommendations</div><div id="recommendations"></div><button class="btn btn-accent btn-block" id="retakeBtn" style="margin-top:24px;">🔁 Retake Quiz (1 attempt available)</button></div>
+    </section>
+  </main>
+
+  <div class="navbar" id="navbar"><button class="btn btn-ghost" id="prevBtn">← Back</button><button class="btn btn-primary" id="nextBtn">Next →</button></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const primaryQuestions = [
+  {
+    question: "Which of the following photosynthetic pathways allows crops like corn and sugarcane to minimize photorespiration under tropical, high-temperature conditions?",
+    options: ["C4 pathway", "C3 pathway", "CAM pathway", "Crassulacean acid cycle"],
+    answer: "C4 pathway",
+    feedbackCorrect: "Correct! C4 crops employ PEP carboxylase in mesophyll cells to concentrate CO₂ in bundle sheath cells, effectively eliminating photorespiration.",
+    feedbackWrong: "Not quite. Crops like corn and sugarcane use the <strong>C4 pathway</strong> to prevent photorespiration in warm, high-light environments.",
+    calculation: null
+  },
+  {
+    question: "A hybrid corn crop is planted at a spacing of 0.75 m between rows and 0.25 m between hills, with exactly 1 plant per hill. What is the theoretical plant population per hectare?",
+    options: ["53,333 plants/ha", "40,000 plants/ha", "66,667 plants/ha", "80,000 plants/ha"],
+    answer: "53,333 plants/ha",
+    feedbackCorrect: "Correct! Dividing 10,000 m² by 0.1875 m² per hill gives 53,333 plants per hectare.",
+    feedbackWrong: "Not quite. Compute theoretical plant population by dividing 1 hectare (10,000 m²) by the area occupied per hill.",
+    calculation: "Area per Hill = Row Spacing × Hill Spacing<br>= 0.75 m × 0.25 m = 0.1875 m²<br>Plant Population = (10,000 m² ÷ 0.1875 m²) × 1 plant/hill<br>= <strong>53,333 plants/ha</strong>"
+  },
+  {
+    question: "In Philippine pomology, which commercial practice is routinely applied to mature Carabao mango trees to induce synchronized off-season flowering?",
+    options: ["Foliar spraying of potassium nitrate (KNO₃)", "Girdling the main trunk", "Heavy application of urea fertilizer", "Continuous flood irrigation"],
+    answer: "Foliar spraying of potassium nitrate (KNO₃)",
+    feedbackCorrect: "Correct! Potassium nitrate (1–2% solution) is widely used in the Philippines to break bud dormancy and trigger synchronized flowering in mango.",
+    feedbackWrong: "Not quite. In the Philippines, <strong>potassium nitrate (KNO₃)</strong> foliar spray is the standard flower inducer for mango.",
+    calculation: null
+  },
+  {
+    question: "The phenomenon wherein an F1 hybrid progeny outperforms both of its inbred parents in vigor, biomass, and yield is termed:",
+    options: ["Heterosis (hybrid vigor)", "Epistasis", "Pleiotropy", "Inbreeding depression"],
+    answer: "Heterosis (hybrid vigor)",
+    feedbackCorrect: "Correct! Heterosis or hybrid vigor describes the increased performance of heterozygous F1 offspring over parental lines.",
+    feedbackWrong: "Not quite. The superior performance of an F1 generation compared to its parental lines is called <strong>heterosis (hybrid vigor)</strong>.",
+    calculation: null
+  },
+  {
+    question: "In an official seed testing laboratory, a 400-seed germination test of certified palay yielded 368 normal seedlings, 18 abnormal seedlings, and 14 dead seeds. What is the germination percentage?",
+    options: ["92%", "88%", "94.5%", "96%"],
+    answer: "92%",
+    feedbackCorrect: "Correct! 368 normal seedlings divided by 400 total seeds tested equals 92% germination, well above the 85% Philippine certification standard.",
+    feedbackWrong: "Not quite. Only normal seedlings count toward the official germination percentage.",
+    calculation: "Germination (%) = (Normal Seedlings ÷ Total Seeds Tested) × 100<br>= (368 ÷ 400) × 100<br>= 0.92 × 100 = <strong>92%</strong>"
+  },
+  {
+    question: "Which of the following fruits exhibits a pronounced climacteric respiratory rise and an ethylene production peak during ripening?",
+    options: ["Carabao mango", "Calamansi", "Pineapple", "Grape"],
+    answer: "Carabao mango",
+    feedbackCorrect: "Correct! Carabao mango is a climacteric fruit that undergoes an autocatalytic burst of ethylene and respiration during ripening.",
+    feedbackWrong: "Not quite. <strong>Carabao mango</strong> is climacteric (calamansi, pineapple, and grapes are non-climacteric and must ripen on the plant).",
+    calculation: null
+  }
+];
+
+const retakeQuestions = [
+  {
+    question: "What enzyme catalyzes the primary carboxylation reaction in C3 plants such as rice and soybean?",
+    options: ["RuBisCO", "PEP carboxylase", "Carbonic anhydrase", "ATP synthase"],
+    answer: "RuBisCO",
+    feedbackCorrect: "Correct! Ribulose-1,5-bisphosphate carboxylase-oxygenase (RuBisCO) is the primary CO₂-fixing enzyme in C3 crops.",
+    feedbackWrong: "Not quite. In C3 plants, the primary carbon-fixing enzyme is <strong>RuBisCO</strong>.",
+    calculation: null
+  },
+  {
+    question: "A cassava field is planted at a spacing of 1.0 m between rows and 0.5 m between hills with 1 stalk cutting per hill. What is the plant population per hectare?",
+    options: ["20,000 plants/ha", "10,000 plants/ha", "25,000 plants/ha", "15,000 plants/ha"],
+    answer: "20,000 plants/ha",
+    feedbackCorrect: "Correct! 10,000 m² divided by (1.0 m × 0.5 m = 0.5 m²) gives 20,000 cassava plants per hectare.",
+    feedbackWrong: "Not quite. Compute plant population as 10,000 m² ÷ area per hill.",
+    calculation: "Area per Hill = 1.0 m × 0.5 m = 0.5 m²<br>Plant Population = 10,000 m² ÷ 0.5 m² = <strong>20,000 plants/ha</strong>"
+  },
+  {
+    question: "In commercial nursery propagation, which asexual propagation method involves joining a scion twig onto an established rootstock so their cambia fuse?",
+    options: ["Grafting", "Air layering (marcotting)", "Stolon division", "Stem cutting"],
+    answer: "Grafting",
+    feedbackCorrect: "Correct! Grafting brings the vascular cambium of the scion into direct contact with that of the rootstock to unite them as one plant.",
+    feedbackWrong: "Not quite. Uniting a scion piece onto a rootstock is known as <strong>grafting</strong>.",
+    calculation: null
+  },
+  {
+    question: "According to Philippine seed certification standards, what color is the official certification tag attached to bags of Foundation Seed?",
+    options: ["Red", "White", "Green", "Blue"],
+    answer: "Red",
+    feedbackCorrect: "Correct! In the Philippines, Foundation Seed carries a red tag (Breeder is white, Registered is green, Certified is blue).",
+    feedbackWrong: "Not quite. <strong>Red</strong> is the official certification tag color for Foundation Seed in the Philippines.",
+    calculation: null
+  },
+  {
+    question: "A lowland rice crop produced an economic grain yield of 4.5 tons/ha with a total biological aboveground biomass of 10.0 tons/ha. What is the harvest index (HI)?",
+    options: ["0.45", "0.55", "0.35", "0.60"],
+    answer: "0.45",
+    feedbackCorrect: "Correct! Harvest index is economic yield divided by total biological yield (4.5 ÷ 10.0 = 0.45, or 45%).",
+    feedbackWrong: "Not quite. Compute Harvest Index as economic grain yield divided by total biological yield.",
+    calculation: "Harvest Index (HI) = Economic Yield ÷ Total Biological Yield<br>= 4.5 tons/ha ÷ 10.0 tons/ha = <strong>0.45</strong> (or 45%)"
+  },
+  {
+    question: "In post-harvest physiology, which naturally occurring plant hormone gas is known as the 'ripening hormone'?",
+    options: ["Ethylene", "Abscisic acid (ABA)", "Gibberellic acid (GA)", "Indole-3-acetic acid (IAA)"],
+    answer: "Ethylene",
+    feedbackCorrect: "Correct! Ethylene (C₂H₄) is the gaseous phytohormone that coordinates ripening, softening, and senescence.",
+    feedbackWrong: "Not quite. The gaseous plant hormone responsible for fruit ripening is <strong>ethylene</strong>.",
+    calculation: null
+  }
+];
+
+const domainNames = [
+  "Crop Physiology",
+  "Agronomic Crop Production",
+  "Horticultural Crop Production",
+  "Plant Breeding & Genetics",
+  "Plant Propagation & Seed Technology",
+  "Post-Harvest Handling & Technology"
+];
+
+const recommendations = [
+  "Review photosynthetic pathways (C3, C4, CAM), photorespiration, light compensation points, and source-sink relationships.",
+  "Practice plant population per hectare formulas, spacing conversions, and lowland vs. upland cropping system fundamentals.",
+  "Study pomology, olericulture, and floriculture practices, including flower induction (e.g., KNO₃) and canopy pruning techniques.",
+  "Revisit Mendelian ratios, heterosis (hybrid vigor), breeding systems for self vs. cross-pollinated crops, and modern MAS tools.",
+  "Master seed germination calculations, Philippine seed certification tag colors (White-Red-Green-Blue), and grafting mechanics.",
+  "Review climacteric vs. non-climacteric fruit classifications, respiration curves, Harvest Index (HI) calculations, and cold chain storage."
+];
+
+const LETTERS = ["A","B","C","D"];
+const NUM_DOMAINS = 6;
+const state = {
+  current: 0,
+  isRetake: false,
+  retakeUsed: false,
+  answers: Array.from({length:NUM_DOMAINS}, () => ({selected:null, confirmed:false, correct:null, correctIndex:null}))
+};
+
+function getQuestions(){ return state.isRetake ? retakeQuestions : primaryQuestions; }
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+const slideEls = [
+  document.getElementById('slide-0'),
+  document.getElementById('slide-1'),
+  document.getElementById('slide-2'),
+  document.getElementById('slide-3'),
+  document.getElementById('slide-4'),
+  document.getElementById('slide-5'),
+  document.getElementById('slide-6'),
+  document.getElementById('slide-score')
+];
+
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const navbar = document.getElementById('navbar');
+const progressBar = document.getElementById('progressBar');
+const progressLabel = document.getElementById('progressLabel');
+
+function renderSlideNav(){
+  slideEls.forEach((el,i) => el.classList.toggle('active', i === state.current));
+  progressBar.style.width = (state.current / 7 * 100) + '%';
+  if(state.current === 0) progressLabel.textContent = 'Introduction';
+  else if(state.current <= NUM_DOMAINS) progressLabel.textContent = 'Question ' + state.current + ' of ' + NUM_DOMAINS;
+  else progressLabel.textContent = 'Results';
+
+  prevBtn.style.visibility = state.current === 0 ? 'hidden' : 'visible';
+  navbar.style.display = (state.current === 0 || state.current === 7) ? 'none' : 'flex';
+  nextBtn.textContent = state.current === NUM_DOMAINS ? 'See Results →' : 'Next →';
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+document.getElementById('startBtn').addEventListener('click', () => { state.current = 1; renderSlideNav(); });
+prevBtn.addEventListener('click', () => { if(state.current > 0){ state.current--; renderSlideNav(); } });
+nextBtn.addEventListener('click', () => {
+  if(state.current >= 1 && state.current <= NUM_DOMAINS){
+    const d = state.current - 1;
+    if(!state.answers[d].confirmed){
+      showToast('Please select an answer to proceed.');
+      return;
+    }
+  }
+  if(state.current === NUM_DOMAINS){
+    computeScore();
+    state.current = 7;
+  } else {
+    state.current++;
+  }
+  renderSlideNav();
+});
+
+function renderDomain(d){
+  const q = getQuestions()[d];
+  document.getElementById('qtext-' + d).textContent = q.question;
+  const shuffled = shuffle(q.options);
+  state.answers[d].correctIndex = shuffled.indexOf(q.answer);
+  const opts = document.getElementById('options-' + d);
+  opts.innerHTML = '';
+  shuffled.forEach((opt,i) => {
+    const div = document.createElement('div');
+    div.className = 'option-card';
+    div.innerHTML = '<span class="option-letter">' + LETTERS[i] + '</span><span>' + opt + '</span>';
+    div.addEventListener('click', () => selectOption(d, i));
+    opts.appendChild(div);
+  });
+  document.getElementById('submitBtn-' + d).classList.add('hidden');
+  document.getElementById('confirmBox-' + d).classList.add('hidden');
+  const fb = document.getElementById('feedback-' + d);
+  fb.classList.add('hidden');
+  fb.classList.remove('feedback-correct','feedback-wrong');
+  fb.innerHTML = '';
+}
+
+function selectOption(d, i){
+  const ans = state.answers[d];
+  if(ans.confirmed) return;
+  ans.selected = i;
+  const opts = document.getElementById('options-' + d);
+  [...opts.children].forEach((el,idx) => el.classList.toggle('selected', idx === i));
+  document.getElementById('submitBtn-' + d).classList.remove('hidden');
+  document.getElementById('confirmBox-' + d).classList.add('hidden');
+}
+
+document.querySelectorAll('[id^="submitBtn-"]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const d = +btn.dataset.domain;
+    document.getElementById('confirmBox-' + d).classList.remove('hidden');
+    btn.classList.add('hidden');
+  });
+});
+
+document.querySelectorAll('[id^="noBtn-"]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const d = +btn.dataset.domain;
+    document.getElementById('confirmBox-' + d).classList.add('hidden');
+    document.getElementById('submitBtn-' + d).classList.remove('hidden');
+  });
+});
+
+document.querySelectorAll('[id^="yesBtn-"]').forEach(btn => {
+  btn.addEventListener('click', () => confirmAnswer(+btn.dataset.domain));
+});
+
+function confirmAnswer(d){
+  const ans = state.answers[d], q = getQuestions()[d];
+  ans.confirmed = true;
+  ans.correct = (ans.selected === ans.correctIndex);
+  const opts = document.getElementById('options-' + d);
+  [...opts.children].forEach((el, i) => {
+    el.classList.add('disabled');
+    if(i === ans.correctIndex) el.classList.add('correct-answer');
+    if(i === ans.selected && !ans.correct) el.classList.add('wrong-answer');
+  });
+  document.getElementById('confirmBox-' + d).classList.add('hidden');
+  const fb = document.getElementById('feedback-' + d);
+  fb.classList.remove('hidden');
+  fb.classList.add(ans.correct ? 'feedback-correct' : 'feedback-wrong');
+  let html = '<p class="feedback-title">' + (ans.correct ? '✅ Correct!' : '❌ Not quite.') + '</p><p>' + (ans.correct ? q.feedbackCorrect : q.feedbackWrong) + '</p>';
+  if(q.calculation) html += '<div class="calc-box"><strong>Step-by-step:</strong><br>' + q.calculation + '</div>';
+  fb.innerHTML = html;
+  fb.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function computeScore(){
+  const score = state.answers.filter(a => a.correct).length;
+  document.getElementById('scoreNumber').textContent = score + ' / ' + NUM_DOMAINS;
+  const box = document.getElementById('recommendations');
+  box.innerHTML = '';
+  const wrong = [];
+  state.answers.forEach((a, i) => { if(!a.correct) wrong.push(i); });
+  if(!wrong.length){
+    box.innerHTML = '<div class="all-correct">🎉 Perfect score! No weak spots identified — keep maintaining your mastery across all six Crop Science domains.</div>';
+  } else {
+    wrong.forEach(i => {
+      const div = document.createElement('div');
+      div.className = 'rec-item';
+      div.innerHTML = '<strong>' + domainNames[i] + ':</strong> ' + recommendations[i];
+      box.appendChild(div);
+    });
+  }
+  let msg = score === 6 ? "Outstanding! You're exam-ready — keep sharpening speed and accuracy under timed conditions." :
+            score === 5 ? "Great job! You're almost there — polish up the one weak spot above before exam day." :
+            score === 4 ? "Solid performance! Review your weak domains below to lock in full mastery." :
+            score === 3 ? "Good foundation! You're halfway there — focus your review time on the domains flagged below." :
+            score === 2 ? "Keep going! Focus your review time on the domains flagged below." :
+                          "Don't be discouraged — every mistake today is a lesson learned before the real AgLE. Review the focus areas below and try again.";
+  document.getElementById('motivationText').textContent = msg;
+  const btn = document.getElementById('retakeBtn');
+  btn.disabled = state.retakeUsed;
+  btn.textContent = state.retakeUsed ? '🔒 Retake already used' : '🔁 Retake Quiz (1 attempt available)';
+}
+
+document.getElementById('retakeBtn').addEventListener('click', () => {
+  if(state.retakeUsed) return;
+  state.retakeUsed = true;
+  state.isRetake = true;
+  state.answers = Array.from({length:NUM_DOMAINS}, () => ({selected:null, confirmed:false, correct:null, correctIndex:null}));
+  for(let i=0;i<NUM_DOMAINS;i++) renderDomain(i);
+  state.current = 1;
+  renderSlideNav();
+});
+
+/* INTERACTIVE VISUAL FIGURES */
+function initPhysio(){
+  const s = document.getElementById('lightSlider');
+  const psBar = document.getElementById('psRateBar');
+  const trBar = document.getElementById('trRateBar');
+  const stomaPore = document.getElementById('stomaPore');
+  const out = document.getElementById('physioReadout');
+  function u(){
+    const val = +s.value;
+    const psWidth = Math.min(65, Math.round(10 + (val/100)*55));
+    const trWidth = Math.min(80, Math.round(8 + (val/100)*72));
+    const poreWidth = Math.max(3, Math.round(2 + (val/100)*10));
+    psBar.setAttribute('width', psWidth);
+    trBar.setAttribute('width', trWidth);
+    stomaPore.setAttribute('width', poreWidth);
+    stomaPore.setAttribute('x', 150 - poreWidth/2);
+    out.textContent = 'Light Intensity: ' + val + '% → Stomatal aperture: ' + (val > 20 ? 'Open' : 'Partially closed') + ' · Photosynthesis: ' + Math.round((psWidth/65)*100) + '% · Transpiration: ' + Math.round((trWidth/80)*100) + '%. High light triggers guard cell turgor and CO₂ uptake.';
+  }
+  s.addEventListener('input', u);
+  u();
+}
+
+function initPop(){
+  const s = document.getElementById('popSlider');
+  const grid = document.getElementById('cropGrid');
+  const out = document.getElementById('popReadout');
+  function u(){
+    const spacingCm = +s.value; // hill spacing in cm (20 to 100 cm)
+    const rowM = 0.75;
+    const hillM = spacingCm / 100;
+    const pop = Math.round(10000 / (rowM * hillM));
+    grid.innerHTML = '';
+    const cols = Math.max(4, Math.min(12, Math.round(300 / spacingCm)));
+    for(let r=0; r<3; r++){
+      for(let c=0; c<cols; c++){
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', 35 + c * (230 / cols));
+        circle.setAttribute('cy', 32 + r * 28);
+        circle.setAttribute('r', 5);
+        circle.setAttribute('fill', '#2e7d32');
+        grid.appendChild(circle);
+      }
+    }
+    out.textContent = 'Spacing: 0.75 m × ' + hillM.toFixed(2) + ' m (1 plant/hill) → Theoretical Population: ' + pop.toLocaleString() + ' plants/ha. Closer spacing increases population until inter-plant competition sets in.';
+  }
+  s.addEventListener('input', u);
+  u();
+}
+
+function initHort(){
+  const wrap = document.getElementById('hortChips');
+  const tip = document.getElementById('hortTooltip');
+  const branches = [
+    {n:'Olericulture', d:'The science and practice of vegetable crop production, culture, and harvesting (e.g., tomato, eggplant, cabbage, bittermelon).'},
+    {n:'Pomology', d:'The branch of horticulture focused on fruit and nut crop cultivation, physiology, and orchard management (e.g., mango, banana, pineapple, durian).'},
+    {n:'Floriculture', d:'The cultivation of flowering and ornamental plants, cut flowers, and foliage for aesthetic, landscape, and commercial cut-flower use.'},
+    {n:'Landscape Horticulture', d:'The design, installation, and maintenance of outdoor plantings, commercial green spaces, and aesthetic turf environments.'}
+  ];
+  branches.forEach(b => {
+    const c = document.createElement('div');
+    c.className = 'term-chip';
+    c.textContent = b.n;
+    c.addEventListener('click', () => {
+      tip.textContent = b.n + ': ' + b.d;
+      tip.classList.add('show');
+    });
+    wrap.appendChild(c);
+  });
+}
+
+function initHeterosis(){
+  const s = document.getElementById('vigorSlider');
+  const f1Bar = document.getElementById('f1Bar');
+  const out = document.getElementById('vigorReadout');
+  function u(){
+    const v = +s.value; // 0 to 100%
+    const height = Math.round(45 + (v/100)*55);
+    f1Bar.setAttribute('height', height);
+    f1Bar.setAttribute('y', 120 - height);
+    out.textContent = 'Hybrid Vigor (Heterosis) Level: +' + v + '% over mid-parent → F1 biomass and grain potential exceed parental lines A and B through combined dominant alleles.';
+  }
+  s.addEventListener('input', u);
+  u();
+}
+
+function initSeedTray(){
+  const s = document.getElementById('germSlider');
+  const grid = document.getElementById('seedGrid');
+  const out = document.getElementById('germReadout');
+  function u(){
+    const germ = +s.value; // 50 to 100%
+    grid.innerHTML = '';
+    const totalCells = 20;
+    const activeCount = Math.round((germ / 100) * totalCells);
+    for(let i=0; i<totalCells; i++){
+      const x = 30 + (i % 10) * 24;
+      const y = 35 + Math.floor(i / 10) * 35;
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', x);
+      circle.setAttribute('cy', y);
+      circle.setAttribute('r', 6);
+      circle.setAttribute('fill', i < activeCount ? '#2e7d32' : '#c62828');
+      grid.appendChild(circle);
+    }
+    const cert = germ >= 85 ? 'PASSED (≥85% PH Certified Standard)' : 'FAILED (<85% Standard)';
+    out.textContent = 'Germination Rate: ' + germ + '% (' + activeCount + '/' + totalCells + ' seedlings) → ' + cert + '. High germination ensures field stand density and reduces replanting cost.';
+  }
+  s.addEventListener('input', u);
+  u();
+}
+
+function initClimacteric(){
+  const s = document.getElementById('climSlider');
+  const dot = document.getElementById('climDot');
+  const out = document.getElementById('climReadout');
+  function u(){
+    const t = +s.value; // 0 to 100
+    const x = 20 + (t / 100) * 260;
+    // Bell curve peaking around t=55 (climacteric peak)
+    const peak = Math.exp(-Math.pow((t - 55) / 18, 2));
+    const y = 105 - peak * 75;
+    dot.setAttribute('cx', x);
+    dot.setAttribute('cy', y);
+    let stage = t < 25 ? 'Pre-climacteric (mature green)' :
+                t < 70 ? 'Climacteric rise & peak (rapid ethylene surge, softening)' :
+                         'Post-climacteric (fully ripe, senescence)';
+    out.textContent = 'Stage: ' + stage + ' · Respiration index: ' + Math.round(peak * 100) + '%. Managing temperature and ethylene scrubbers delays this surge to extend shelf life.';
+  }
+  s.addEventListener('input', u);
+  u();
+}
+
+/* INITIALIZATION */
+for(let i=0; i<NUM_DOMAINS; i++) renderDomain(i);
+initPhysio();
+initPop();
+initHort();
+initHeterosis();
+initSeedTray();
+initClimacteric();
+renderSlideNav();
+</script>
+</body>
+</html>
